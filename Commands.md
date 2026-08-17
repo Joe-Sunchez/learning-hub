@@ -8,14 +8,14 @@ you can use it for good an i hope it useful for you :)
 ``` bash
 ls
 ```
-#### options
-**-l this option lists the files in the repo**
-**-t sort's items by time** 
-**-r reverse order while sorting** 
-**-h human readable mode** 
-**-a show all in the dir** 
-**-R list subdirectories recursively** 
-*I most use the -ltrh and -ltrha*
+### options
+- **-l this option lists the files in the repo**
+- **-t sort's items by time** 
+- **-r reverse order while sorting** 
+- **-h human readable mode** 
+- **-a show all in the dir** 
+- **-R list subdirectories recursively** 
+- *I most use the -ltrh and -ltrha*
 
 ## commad 
 *To move in to a directory*
@@ -86,21 +86,22 @@ dmesg
 journalctl
 ```
 ### options
-**-r Reverse output so that the newest entries are displayed first.**
-**-f Show only the most recent journal entries**
-**-e Immediately jump to the end of the journal inside the implied pager tool.**
-**-n Show the most recent journal events and limit the number of events shown.**
-**-k Show only kernel messages.**
-**-b Show messages from a specific boot.**
-**-p Filter output by message priorities or priority ranges.** *you need to read more for this.*
-**-u Show messages for the specified systemd unit UNIT**
-**--list-boots Show a tabular list of boot numbers (relative to the current boot), their IDs, and the timestamps of the first and last message pertaining to the boot.**
-**--vaccum-time removes archived journal files older than the specified timespan.**
-**--vaccum-size removes the oldest archived journal files until the disk space they use falls below the specified size.**
-**--vaccum-file leaves only the specified number of separate journal files.**
-**-D Takes a directory path as argument.**
-**-xefu *that's on you***
+- **-r Reverse output so that the newest entries are displayed first.**
+- **-f Show only the most recent journal entries**
+- **-e Immediately jump to the end of the journal inside the implied pager tool.**
+- **-n Show the most recent journal events and limit the number of events shown.**
+- **-k Show only kernel messages.**
+- **-b Show messages from a specific boot.**
+- **-p Filter output by message priorities or priority ranges.** *you need to read more for this.*
+- **-u Show messages for the specified systemd unit UNIT**
+- **--list-boots Show a tabular list of boot numbers (relative to the current boot), their IDs, and the timestamps of the first and last message pertaining to the boot.**
+- **--vaccum-time removes archived journal files older than the specified timespan.**
+- **--vaccum-size removes the oldest archived journal files until the disk space they use falls below the specified size.**
+- **--vaccum-file leaves only the specified number of separate journal files.**
+- **-D Takes a directory path as argument.**
+- **-xefu *that's on you***
 
+## commad 
 *To poweroff the PC*
 ``` bash
 shutdown
