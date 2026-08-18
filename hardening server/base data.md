@@ -64,8 +64,42 @@ we run the auditd and configed it together . if you need a help use the ai for g
 
 ## UFW  (Uncomplicated Fire Wall)
 
-ufw it self not a kind of firewall , mostly it's a sempel user interface to manage the iptables/nftables .
+UFW it self not a kind of firewall , mostly it's a sempel user interface to manage the iptables/nftables .
 whith the UFW you can tell system what port's can have comnecation and what port's can not .
 
-this a very importent tool to keep server/PC safe if you open a port like 6172 . a hacker can semply use it you acsses to the terminal/CMD ,than run a command . so we have to keep our port close in the public network.
+this a very importent tool to keep server/PC safe if you let a port like 6172 open. a hacker can semply use it you acsses to the terminal/CMD ,than run a command . so we have to keep our port close in the public network.
+
+to basic setup for UFW you have to enter some command that i will tell you :
+```bash
+sudo UFW default deny incoming      #this command tell firewall to rejact all connection to host intil i set a rule for it 
+sudo UFW default allow outgoing     # this one tell's the UFW to allow the connection from this host to othe ones 
+sudo UFW default deny routed    # this command tell's the UFW to don't act as a router (if you don't know what route is jast serch for it :) )
+```
+
+intile now you tell the ufw :
+- don't let no one connect to the server/PC port's (close all port's)
+- allow server/PC have outgoing connection 
+- don't action as a router 
+
+but we miss some thing !!! the adminstrator connaction to the server.
+
+at the moument you have the ssh connection thro the 22/tcp port to your server and you need to set a rule to keep port 22/tcp open . use the command below to do that :
+```bash
+sudo ufw allow 22/tcp commant 'SSH'     #this command has a comment to tell/remember you that port open for ssh 
+```
+
+you can see what rules you have added to the ufw by using the :
+```bash
+sudo ufw show added     
+```
+
+
+at the moument you have ben tould the UFW what to do. but you not tell the UFW to do it now so the UFW do not action at all . to active the UFW run the command :
+
+```bash
+sudo ufw enable
+```
+
+that's all to active and costom your ufw for now we will continew ...
+
 
