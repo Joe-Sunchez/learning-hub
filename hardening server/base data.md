@@ -1,23 +1,43 @@
-# hardning server 
+# Server Hardening
 
-at first a have a good question :
+## Introduction
 
-why we need to hardening our server ? why we need to use hardening in our PC's ?
+First, I have a simple question:
 
-for the first one why you lock your car door or lock your door befor going out ??? you shoud say for my safety or to keep my things safe . thats the job of a smart human . so why you dont keep your data ,your website or your games or other things that importent to you.
+**Why do we need to harden our servers? Why do we need to harden our PCs?**
 
-hardening helps you keep your PC safe and your data un acsseceble form other persons .
-at here i start to hardening a server what i run it in my PC in the isolated inviroment so i can acsses it any time i want .
+Think about why you lock your car or your house before leaving. You do it for safety and to protect your belongings.
 
-i am starting to whatch a video to hardening my server .
-at this part i learning about auditd , fail2ban , ssh hardening . 
+So why shouldn't we protect our data, websites, games, and other important resources?
 
-## auditd 
+Server hardening helps protect your system and data from unauthorized access.
 
-auditd is a linux tool (as fare as i know ) it help you to see the changes on your server or your PC .
-this tool uses rules to secure your server/PC safe . you can set rules to a unic file and set auditd to whtch it .
+In this project, I am starting to harden a Linux server that is running on my PC inside an isolated environment. This allows me to safely experiment with different security configurations.
 
-as the video auditd local rules seve at the /etc/audit/rules.d/***.rules . the content of the file is :
+I am following a video course to learn how to harden a Linux server.
+
+In this part, I am learning about:
+
+- Auditd
+- Fail2ban
+- SSH hardening
+
+---
+
+## Auditd
+
+Auditd is a Linux auditing tool that can be used to monitor changes and security-related events on a server or PC.
+
+It uses rules to monitor specific files, system calls, and security-related activities. You can create rules for specific files and configure Auditd to watch them.
+
+According to the video, local Auditd rules are stored in:
+
+```text
+/etc/audit/rules.d/*.rules
+```
+
+The content of the rules file is:
+
 ```bash
 -w /etc/sudoers -p wa -k scope
 -w /etc/sudoers.d -p wa -k scope
@@ -50,56 +70,82 @@ as the video auditd local rules seve at the /etc/audit/rules.d/***.rules . the c
 -w /var/run/faillock -p wa -k logins
 ```
 
-than save the file and run the below commands
-```bash
-systemctl restart auditd.*   #this one restart the auditd
-sudo augenrules --load      #this one load the rules what we rode 
-sudo auditctl -l | head -20     #at here we have to see our rules 
-sudo ausearch -k identity | tail -1     # we see the auditd report here 
-sudo aureport --summary     # see what hapend :)
+After saving the rules file, run the following commands:
 
+```bash
+sudo systemctl restart auditd
+sudo augenrules --load
+sudo auditctl -l | head -20
+sudo ausearch -k identity | tail -1
+sudo aureport --summary
 ```
 
-we run the auditd and configed it together . if you need a help use the ai for good it know's all things :)
+These commands restart Auditd, load the rules, display the active rules, search for events associated with the `identity` key, and display a summary report.
 
-## UFW  (Uncomplicated Fire Wall)
+At this point, I have configured Auditd and tested the rules.
 
-UFW it self not a kind of firewall , mostly it's a sempel user interface to manage the iptables/nftables .
-whith the UFW you can tell system what port's can have comnecation and what port's can not .
+---
 
-this a very importent tool to keep server/PC safe if you let a port like 6172 open. a hacker can semply use it you acsses to the terminal/CMD ,than run a command . so we have to keep our port close in the public network.
+## UFW (Uncomplicated Firewall)
 
-to basic setup for UFW you have to enter some command that i will tell you :
+UFW stands for **Uncomplicated Firewall**.
+
+UFW itself is not a firewall engine. It is a simple interface for managing firewall rules, typically through the Linux firewall stack.
+
+With UFW, you can control which connections are allowed and which connections are denied.
+
+This is an important security tool. For example, if an unnecessary port is open, an attacker may be able to use that exposed service to gain unauthorized access to the system.
+
+Therefore, unnecessary ports should remain closed, especially on systems exposed to public networks.
+
+### Basic UFW configuration
+
+To configure the basic firewall policies, run:
+
 ```bash
-sudo UFW default deny incoming      #this command tell firewall to rejact all connection to host intil i set a rule for it 
-sudo UFW default allow outgoing     # this one tell's the UFW to allow the connection from this host to othe ones 
-sudo UFW default deny routed    # this command tell's the UFW to don't act as a router (if you don't know what route is jast serch for it :) )
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw default deny routed
 ```
 
-intile now you tell the ufw :
-- don't let no one connect to the server/PC port's (close all port's)
-- allow server/PC have outgoing connection 
-- don't action as a router 
+These policies mean:
 
-but we miss some thing !!! the adminstrator connaction to the server.
+- Deny incoming connections by default.
+- Allow outgoing connections by default.
+- Do not allow the system to forward routed traffic by default.
 
-at the moument you have the ssh connection thro the 22/tcp port to your server and you need to set a rule to keep port 22/tcp open . use the command below to do that :
+At this point, UFW is configured to:
+
+- Block incoming connections unless a specific rule allows them.
+- Allow outgoing connections.
+- Disable routed traffic by default.
+
+However, there is one important thing we are missing:
+
+### SSH access
+
+At the moment, I use SSH to connect to the server through TCP port `22`. Therefore, I need to create a firewall rule that allows SSH connections:
+
 ```bash
-sudo ufw allow 22/tcp commant 'SSH'     #this command has a comment to tell/remember you that port open for ssh 
+sudo ufw allow 22/tcp comment 'SSH'
 ```
 
-you can see what rules you have added to the ufw by using the :
+The comment helps identify why this port is open.
+
+To see the rules that have been added to UFW, run:
+
 ```bash
-sudo ufw show added     
+sudo ufw show added
 ```
 
+At this point, UFW knows what rules to use, but the firewall has not been enabled yet.
 
-at the moument you have ben tould the UFW what to do. but you not tell the UFW to do it now so the UFW do not action at all . to active the UFW run the command :
+To activate UFW:
 
 ```bash
 sudo ufw enable
 ```
 
-that's all to active and costom your ufw for now we will continew ...
+That's all for the basic UFW configuration.
 
-
+I will continue adding more hardening configurations later.
