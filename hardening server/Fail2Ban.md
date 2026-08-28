@@ -46,26 +46,17 @@ Then add the following configuration:
 
 ```text
 [DEFAULT]
-
 bantime = 600
-
 findtime = 600
-
 maxretry = 5
-
 banaction = ufw
 
 
 [sshd]
-
 enabled = true
-
 port = ssh
-
 filter = sshd
-
 logpath = /var/log/auth.log
-
 maxretry = 5
 ```
 
