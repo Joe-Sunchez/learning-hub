@@ -1,201 +1,264 @@
-# SSH Hardening 
+# SSH Hardening
 
-### at first what is ssh ?
+### At First, What Is SSH?
 
-ssh is a way that you can use it to connect the server or  pc's terminal .
+SSH is a protocol that allows you to connect to a server or PC and access its terminal remotely.
 
-so hardening this service is critical for users and developer to keep :
-- you data safe
-- minimaize the acsses of other pepele
-- connecting to target esier
-- a solution to sand and resive the file 
+Hardening this service is critical for users and developers because it helps to:
 
-at here we will :
-- remove the password login 
-- config this service
-- learn how to use it 
+* Keep your data safe
+* Minimize unauthorized access
+* Make secure connections to the target easier
+* Provide a secure way to send and receive files
 
-at the moment i use a *PC (ubuntu)* and a *VM server (ubuntu-server)* so when i sey **PC** i am talking about my main PC and when i sey **server**  i am talking about my VM server :)
+In this guide, we will:
 
-## Connect to Server
+* Disable password-based login
+* Configure the SSH service
+* Learn how to use SSH securely
 
-at PC open a terminal and type:
+At the moment, I use a **PC (Ubuntu)** and a **VM server (Ubuntu Server)**. So, when I say **PC**, I am talking about my main PC, and when I say **server**, I am talking about my VM server. :)
+
+---
+
+## Connect to the Server
+
+On the PC, open a terminal and type:
 
 ```bash
 ssh YOUR-USER-NAME-IN-SERVER@YOUR-SERVER-IP-ADDRESS
 ```
-**THIS COMMEDS ALSO RUN IN WINDOWS CMD**
 
-type yes for the trust question and than enter your server password you will connect to the server :)
+**These commands also work in Windows CMD.**
 
-## backup
+Type `yes` when asked whether you want to trust the server, and then enter your server password. You will be connected to the server. :)
 
-for start we want to chenge the config of ssh in out server so dont forget to get a backup of default config's 
-to do that type :
+---
+
+## Backup
+
+First, we want to change the SSH configuration on our server, so don't forget to make a backup of the default configuration.
+
+To do that, type:
 
 ```bash
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
 ```
 
-than to see what we do , you can type :
+Then, to check the files, you can type:
 
 ```bash
-ls -lh
+ls -lh /etc/ssh/
 ```
-now you have to get a list in that list you have to see these to file :
 
-- sshd_config
-- sshd_config.backup
+You should see these two files:
 
-### now we need a new keypair 
+* `sshd_config`
+* `sshd_config.backup`
 
+---
 
-to create the keypair at PC type :
+### Now We Need a New Key Pair
+
+To create an SSH key pair on the PC, type:
 
 ```bash
 ssh-keygen
 ```
-or you can short the genaring prosses using :
 
-```bash 
-ssh-keygen -t ed25519 -C " *** YOUR COMMENT :) *** "
+Or, you can speed up the key-generation process by using:
+
+```bash
+ssh-keygen -t ed25519 -C "YOUR COMMENT :)"
 ```
 
-after a enter the ssh service will ask you about the location and the passphrase you can costome it if you want or you can skip it by pressing enter.
+After pressing Enter, the SSH service will ask you about the file location and passphrase.
 
-at the end by typing :
+You can customize them if you want, or skip them by pressing Enter.
+
+At the end, type:
 
 ```bash
 ls -ltrh ~/.ssh/
 ```
 
-you will see these file's 
+You should see these files:
 
 ```text
 id_ed25519
 id_ed25519.pub
 ```
 
-we need the content of one of these file (the .pub one) so we type :
+We need the content of the `.pub` file, so type:
 
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-than copy the content line (Ctrl+Shift+C)
+Then copy the output line using `Ctrl+Shift+C`.
 
-go to the server teminal and fo to .ssh dir
+Go to the server terminal and enter the `.ssh` directory.
 
-somtime at the server **.ssh** dir not exist you can create it by type :
+Sometimes the `.ssh` directory does not exist on the server. You can create it by typing:
 
 ```bash
-mkdir -p ~/.ssh ; chmod 700 ~/.ssh
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ```
 
-to craete the authorized keys file (if it's not exist) type :
+To create the `authorized_keys` file, if it does not already exist, type:
 
 ```bash
 nano ~/.ssh/authorized_keys
 ```
 
-here you have to paste the content of id_ed25519.pub file (use Ctrl+Shift+V)
+Paste the content of the `id_ed25519.pub` file here using `Ctrl+Shift+V`.
 
-than with Ctrl+O and Ctrl+X close the nano than chenge the acess to this file using :
+Then press `Ctrl+O` to save and `Ctrl+X` to exit Nano.
 
-```bash 
-chmod 600 ~/.ssh/authorizes_keys
+Now change the permissions of the file:
+
+```bash
+chmod 600 ~/.ssh/authorized_keys
 ```
 
-now by typing the 'exit' close the server terminal in PC and try to connect to server again using : 
+Now type:
+
+```bash
+exit
+```
+
+This will close the server session.
+
+From the PC, try to connect to the server again:
 
 ```bash
 ssh YOUR-USER-NAME-IN-SERVER@YOUR-SERVER-IP-ADDRESS
 ```
 
-**now you have to connect the server without any password**
+**Now you should be able to connect to the server without entering the server account password.**
 
-now we want to cheng the sshd_config file . open the config file with nano using :
+---
 
-```bash 
+## Configure SSH
+
+Now we want to change the `sshd_config` file.
+
+Open the configuration file with Nano:
+
+```bash
 sudo nano /etc/ssh/sshd_config
 ```
 
-we have to uncomment some of these configs and also chenge some of them.
-i write the parts that have to uncommect and if you see the **-->** it mins changing the value .
+We have to uncomment some of these settings and change some of their values.
+
+I have written the settings that need to be changed below. If you see `-->`, it means the value should be changed.
 
 ```text
 LogLevel INFO
-LogingGraceTime 2m --> 60
-PermitRootLogin prohibit-password --> no
-MaxAuthTries 6 --> 4
-MaxSessions 10 
+
+LoginGraceTime 60
+
+PermitRootLogin no
+
+MaxAuthTries 4
+
+MaxSessions 10
+
 PermitEmptyPasswords no
-ClientAliveInterval 0 --> 15
-ClientAliveCountMax 3 --> 15
+
+ClientAliveInterval 15
+
+ClientAliveCountMax 15
 ```
 
-apply these chenges and seve the file .than go to this file and edit it :
+Apply these changes and save the file.
+
+Then edit this file:
 
 ```bash
 sudo nano /etc/ssh/sshd_config.d/50-cloud-init.conf
 ```
 
-than chenge the :
- 
+Change:
+
 ```text
-PasswordAuthentication yes --> no
+PasswordAuthentication yes
 ```
 
-ok seve and exit the file .
+to:
 
-## what these changes do ?
+```text
+PasswordAuthentication no
+```
 
-these chenges give us :
-- ditaile login (login logs)
-- disconnecting any connection who unused for more than 60 sacend
-- disable login as root
-- limitation of password atamps befor disconnacting 
-- limit's the sessions 
-- blocking the accounnts who has no password
-- checking the client connacton evry 15 sacend and if 3 time chacking failed disconnact the client
-- blocking the authentication with password in ssh 
+Save and exit the file.
 
-to check the configoration of ssh type :
+---
+
+## What Do These Changes Do?
+
+These changes provide:
+
+* Detailed login logging
+* A 60-second limit for completing the SSH login process
+* Disabled root login
+* A limit on failed authentication attempts
+* A limit on the number of simultaneous SSH sessions
+* Prevention of login using an empty password
+* Periodic checking of the client connection
+* Disconnection of inactive connections according to the configured keepalive settings
+* Disabled password authentication for SSH
+
+---
+
+## Check the SSH Configuration
+
+Before restarting SSH, check the configuration for syntax errors:
 
 ```bash
 sudo sshd -t
 ```
 
-if nothing shows up we are good . to activate all the changes we need to re start the service using :
+If nothing is displayed, the configuration syntax is valid.
+
+To apply the changes, restart the SSH service:
 
 ```bash
-sudo systemctl restart sshd
+sudo systemctl restart ssh
 ```
 
-to checking the status of the service :
+To check the status of the service:
 
 ```bash
-sudo systemctl restart sshd
+sudo systemctl status ssh
 ```
 
-if its active our chenges has made and thay work. to test the configoration close the connation to server than try to connect the server without a key using :
+If the service is active, the configuration has been applied successfully.
+
+---
+
+## Test the Configuration
+
+To test whether password authentication has been disabled, close the current connection to the server and try to connect without using a key:
 
 ```bash
 ssh -o PubkeyAuthentication=no YOUR-USER-NAME-IN-SERVER@YOUR-SERVER-IP-ADDRESS
 ```
 
-if you get a 
+If you get:
 
 ```text
 Permission denied
 ```
 
-that's mines the configoration works now try to connect the server normaly :
+it means password authentication is disabled and the configuration is working.
+
+Now try to connect normally:
 
 ```bash
 ssh YOUR-USER-NAME-IN-SERVER@YOUR-SERVER-IP-ADDRESS
 ```
 
-now you have to connect emideitly 
+You should be able to connect using your SSH key.
 
-thats all
+That's all! :)
