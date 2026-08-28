@@ -156,19 +156,19 @@ I have written the settings that need to be changed below. If you see `-->`, it 
 ```text
 LogLevel INFO
 
-LoginGraceTime 60
+LoginGraceTime 2m --> 60
 
-PermitRootLogin no
+PermitRootLogin prohibit-password --> no
 
-MaxAuthTries 4
+MaxAuthTries 6 --> 4
 
 MaxSessions 10
 
 PermitEmptyPasswords no
 
-ClientAliveInterval 15
+ClientAliveInterval 0 --> 15
 
-ClientAliveCountMax 15
+ClientAliveCountMax 3
 ```
 
 Apply these changes and save the file.
