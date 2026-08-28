@@ -22,3 +22,5 @@ In this part, I am learning about:
 - Fail2ban
 - UFW
 - SSH hardening
+
+the file's added to you can copy and use this file's
